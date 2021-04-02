@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -29,6 +31,7 @@ public class RGSMain {
 		
 		//using default filepath for now, option to change with setters if there for later
 		File[] categories = getCategoriesFromFilePath(new MainSetup().getFilepath());
+		List<File> categoriesMutable = Arrays.asList(categories);
 		int selection;
 		ArrayList<File> allGamesMutable = new ArrayList<>();
 		File selectedGame = null;
@@ -40,21 +43,21 @@ public class RGSMain {
 			System.out.println("Please select a category number below to select or remove a category.  Or type '0' to randomize games from all categories.");
 			
 			
-			
-			for(int i = 1; i < categories.length + 1; i++) {
+			for(int i = 1; i < categoriesMutable.size() + 1; i++) {
 				
-				System.out.println(i + ". " + categories[i-1].getName());
+				System.out.println(i + ". " + categoriesMutable.get(i-1).getName());
 				
 			}
 			
 			selection = scn.nextInt();
+			scn.nextLine();
 			
 			if(selection == 0) {
 				
 				Boolean rollgame = true;
 				
 				do{
-					allGamesMutable = getGameList(categories);
+					allGamesMutable = getGameList(categoriesMutable);
 					selectedGame = randomGameSelector(allGamesMutable);
 					System.out.println("Run this game? (y/n) " + selectedGame.getName());
 					String input = scn.nextLine();
@@ -71,20 +74,49 @@ public class RGSMain {
 				break;
 				
 				
-			} else if(selection > categories.length) {
+			} else if(selection > categoriesMutable.size()) {
 				System.out.println("No such category, please enter a valid selection.");
 			} else {
 				
+				System.out.println("To roll from only this category enter '1'.");
+				
+				int remRoll = scn.nextInt();
+				scn.nextLine();
+				if(remRoll == 1) {
+					//roll from category
+					File sCatg = categories[selection-1];
+					List<File> asList = new ArrayList<>();
+					asList.add(sCatg);
+					
+					Boolean rollgame = true;
+					
+					while(rollgame){
+						allGamesMutable = getGameList(asList);
+						selectedGame = randomGameSelector(allGamesMutable);
+						System.out.println("Run this game? (y/n) " + selectedGame.getName());
+						String input = scn.nextLine();
+						
+						
+						if(input.equalsIgnoreCase("y")) { 
+							rollgame = false;
+							break;
+						} else {
+							rollgame = true;
+						}
+						
+					};
+					
+					break;
+					
+					
+				} else {
+					System.out.println("invalid selection, please try again");
+				}
+				
+				
 				break;
 			}
-			
 		}
-		
-		
-
-		
-		
-
 	}
 	
 	public static File[] getCategoriesFromFilePath(String filepath){
@@ -95,10 +127,10 @@ public class RGSMain {
 		
 	}
 	
-	public static ArrayList<File> getGameList(File[] sCategories){
+	public static ArrayList<File> getGameList(List<File> categoriesMutable){
 		ArrayList<File> allGames = new ArrayList<>();
 		
-		for(File folder : sCategories) {
+		for(File folder : categoriesMutable) {
 			
 			/*
 			 * System.out.println(folder.getAbsolutePath()); try {
@@ -144,6 +176,11 @@ public class RGSMain {
 		File randomGame = allGames.get(random.nextInt(allGames.size()));
 		
 		return randomGame;
+		
+	}
+	
+	public static void runGame(File selectedGame) {
+		//placeholder
 		
 	}
 	
