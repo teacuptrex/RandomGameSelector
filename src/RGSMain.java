@@ -1,6 +1,8 @@
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.Scanner;
 public class RGSMain {
 	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		Scanner scn = new Scanner(System.in);
 		
@@ -116,7 +118,8 @@ public class RGSMain {
 				
 				break;
 			}
-		}
+		} 
+		runGame(selectedGame);
 	}
 	
 	public static File[] getCategoriesFromFilePath(String filepath){
@@ -179,11 +182,20 @@ public class RGSMain {
 		
 	}
 	
-	public static void runGame(File selectedGame) {
-		//placeholder
+	public static void runGame(File selectedGame) throws IOException {
+	
+		if(!Desktop.isDesktopSupported()){
+            System.out.println("Desktop is not supported");
+            return;
+        }
+        
+        Desktop desktop = Desktop.getDesktop();
+        if(selectedGame.exists()) desktop.open(selectedGame);
+        
+    }
 		
-	}
+}
 	
 	 
 
-}
+
